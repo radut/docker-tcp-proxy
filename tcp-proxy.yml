@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tcp-proxy
+spec:
+  selector:
+    matchLabels:
+      app: tcp-proxy
+  replicas: 1
+  minReadySeconds: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: tcp-proxy
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: tcp-proxy
+          image: radut/tcp-proxy:latest
+          imagePullPolicy: Always
+          env:
+              - name: LISTEN
+                value: ":8080"
+              - name: TALK
+                value: "127.0.0.1:8081"
+                
+
